@@ -111,7 +111,7 @@ class Scan extends CI_Controller {
 				foreach($songfiles as $file){
 					$info = pathinfo($songdir."/".$file);
 
-					//If sm file exist and it is not empty
+					//If sm file exist
 					if(@$info['extension'] == 'sm'){
 
 						//Found a simfile that was utf16, hack to handle this.
@@ -127,6 +127,7 @@ class Scan extends CI_Controller {
 
                                                 $fh = file($songdir."/".$file);
 
+						//If SM file exists, but is empty, check for dwi file.
 						if(filesize($songdir."/".$file) == 0){
 							$dwi = $songdir."/".$info['filename'].".dwi";
 							if(file_exists($dwi))
