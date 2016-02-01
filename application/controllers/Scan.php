@@ -69,15 +69,17 @@ class Scan extends CI_Controller {
     					//$zip->extractTo($scandir);
 					for ($i = 0; $i < $zip->numFiles; $i++){
 						if(stripos($zip->getNameIndex($i), ".sm") || stripos($zip->getNameIndex($i), ".dwi") || stripos($zip->getNameIndex($i), ".ssc")){
-				        		$zip->extractTo($scandir, array($zip->getNameIndex($i)));
-							//echo $zip->getNameIndex($i)."\n";
-							$foldername = explode('/', $zip->getNameIndex($i))[0];
+				        		//Backs with sm.old files....
+							if(!stripos($zip->getNameIndex($i), ".old")){
+								$zip->extractTo($scandir, array($zip->getNameIndex($i)));
+								//echo $zip->getNameIndex($i)."\n";
+								$foldername = explode('/', $zip->getNameIndex($i))[0];
+							}
 						}
-
 					}
-					echo $foldername;
+					//echo $foldername;
 					$zip->close();
-					exit();
+					//exit();
 					//echo $pack['packname'];
 					//If ZIP extracted correctly, scan the directory.
 					$this->scanDirectory($scandir.$foldername, $pack['id']);
@@ -119,7 +121,7 @@ class Scan extends CI_Controller {
 				foreach($songfiles as $file){
 					$info = pathinfo($songdir."/".$file);
 					//If sm file exist and not a hidden file.
-					if((@$info['extension'] == 'sm' || @$info['extension'] == 'dwi' || @$info['extension'] == 'ssc') && $file{0} != '.'){
+					if((strcasecmp(@$info['extension'], 'sm') == '0' || strcasecmp(@$info['extension'],'dwi') == '0' || strcasecmp(@$info['extension'],'ssc') == '0') && $file{0} != '.'){
 						echo $file."\n";
 						//Found a simfile that was utf16, hack to handle this.
                                                 //Do not know a better way to do this. Shelling out instead! #bashlyfe
@@ -132,15 +134,14 @@ class Scan extends CI_Controller {
                                                         echo $songdir."/".$file.": UTF16, converted to UTF8\n";
                                                 }//end utf-16 hackjob fix
 
-						if(@$info['extension'] == 'dwi'){
-							if(file_exists($songdir."/".$info['filename']."sm")){
-								echo "SM exists, use that instead of DWI";
-								break;
+						if(strcasecmp($info['extension'], 'dwi') == '0'){
+							//print_r($info);
+							if(file_exists($songdir."/".$info['filename'].".sm")){
+								echo "sm exists, use that instead of .dwi \n";
+								continue;
 							}
 						}
-
                                                 $fh = file($songdir."/".$file);
-
 
 						//If SM file exists, but is empty, check for dwi file.
 						if(filesize($songdir."/".$file) == 0){
@@ -148,7 +149,7 @@ class Scan extends CI_Controller {
 							if(file_exists($dwi))
 								$fh = file($dwi);
 							else
-								break;
+								continue;
 						}
 
 						$artist = preg_grep("/ARTIST/", $fh);
