@@ -68,16 +68,16 @@ class Scan extends CI_Controller {
 				if ($zip->open($file) === TRUE) {
     					//$zip->extractTo($scandir);
 					for ($i = 0; $i < $zip->numFiles; $i++){
-						if(strpos($zip->getNameIndex($i), ".sm") || strpos($zip->getNameIndex($i), ".dwi") || strpos($zip->getNameIndex($i), ".ssc")){
+						if(stripos($zip->getNameIndex($i), ".sm") || stripos($zip->getNameIndex($i), ".dwi") || stripos($zip->getNameIndex($i), ".ssc")){
 				        		$zip->extractTo($scandir, array($zip->getNameIndex($i)));
 							//echo $zip->getNameIndex($i)."\n";
 							$foldername = explode('/', $zip->getNameIndex($i))[0];
 						}
 
 					}
-					//echo $foldername;
+					echo $foldername;
 					$zip->close();
-					//exit();
+					exit();
 					//echo $pack['packname'];
 					//If ZIP extracted correctly, scan the directory.
 					$this->scanDirectory($scandir.$foldername, $pack['id']);
