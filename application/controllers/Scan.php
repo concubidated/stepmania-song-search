@@ -69,20 +69,19 @@ class Scan extends CI_Controller {
     					//exit();
 					$foldername = explode('/',$zip->getNameIndex('1'))[0];
 					$zip->close();
-					echo "$pack[packname]\n";
+					//echo $pack['packname'];
 					//If ZIP extracted correctly, scan the directory.
 					$this->scanDirectory($scandir.$foldername, $pack['id']);
+					//exit();
 					$sql = "UPDATE Packs SET `scanned` = '1' WHERE id = $pack[id]";
 					$query = $this->db->query($sql);
 
 					//Delete extracted directory
 					$this->functions->rrmdir($scandir.$foldername);
-
+					echo "Scanned: ".$pack['packname']."\n";
 				} else
-    					echo 'failed';
+    					echo 'Failed to open: '.$pack['packname'];
 			}//end if pack is zip
-		//$i++;
-		echo "Scanned: ".$pack['packname']."\n";
 		}//end foreach pack
 
 
@@ -110,9 +109,9 @@ class Scan extends CI_Controller {
 
 				foreach($songfiles as $file){
 					$info = pathinfo($songdir."/".$file);
-
-					//If sm file exist
-					if(@$info['extension'] == 'sm'){
+					//echo $file."<br>";
+					//If sm file exist and not a hidden file.
+					if(@$info['extension'] == 'sm' && $file{0} != '.'){
 
 						//Found a simfile that was utf16, hack to handle this.
                                                 //Do not know a better way to do this. Shelling out instead! #bashlyfe
@@ -170,10 +169,17 @@ class Scan extends CI_Controller {
                                                 	}
 						} else
 							$credit = "''";
-						//print_r($title);
+
+						//Cause sometimes people have typos in simfiles.
+						if(is_array($credit))
+							$credit = "''";
+
+						//if(is_array($title))
+						//	print_r($title);
 
 						$sql = "INSERT INTO Songs (`title`, `subtitle`,`titletranslit`,`subtitletranslit`,`artist`,`credit`, `hash`)
 							VALUES ($title, $subtitle, $titletrans, $subtitletrans, $artist, $credit, '$hash')";
+
 						$query = $this->db->query($sql);
 						$songid = $this->db->insert_id();
 
