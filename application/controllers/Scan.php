@@ -63,12 +63,21 @@ class Scan extends CI_Controller {
 				$file = $newdir.$pack['packname'].".".$pack['filetype'];
 				$zip = new ZipArchive;
 
+				//This is much better, only extract sm and dwi files, nothing else.
+				//this fixed broken zips with incorrect directories
 				if ($zip->open($file) === TRUE) {
-    					$zip->extractTo($scandir);
-					//echo $zip->getNameIndex('1');
-    					//exit();
-					$foldername = explode('/',$zip->getNameIndex('1'))[0];
+    					//$zip->extractTo($scandir);
+					for ($i = 0; $i < $zip->numFiles; $i++){
+						if(strpos($zip->getNameIndex($i), ".sm") || strpos($zip->getNameIndex($i), ".dwi") || strpos($zip->getNameIndex($i), ".ssc")){
+				        		$zip->extractTo($scandir, array($zip->getNameIndex($i)));
+							//echo $zip->getNameIndex($i)."\n";
+							$foldername = explode('/', $zip->getNameIndex($i))[0];
+						}
+
+					}
+					//echo $foldername;
 					$zip->close();
+					//exit();
 					//echo $pack['packname'];
 					//If ZIP extracted correctly, scan the directory.
 					$this->scanDirectory($scandir.$foldername, $pack['id']);
@@ -80,7 +89,8 @@ class Scan extends CI_Controller {
 					$this->functions->rrmdir($scandir.$foldername);
 					echo "Scanned: ".$pack['packname']."\n";
 				} else
-    					echo 'Failed to open: '.$pack['packname'];
+    					echo 'Failed to open: '.$pack['packname']."\n";
+			exit();
 			}//end if pack is zip
 		}//end foreach pack
 
@@ -102,17 +112,15 @@ class Scan extends CI_Controller {
 		//$folder = strtolower($folder);
 		$songs = scandir($folder);
 
-		foreach($songs as $songdir){
-			$songdir = $folder.'/'.$songdir;
-			if(is_dir($songdir)){
+		foreach($songs as $songdirtemp){
+			$songdir = $folder.'/'.$songdirtemp;
+			if(is_dir($songdir) && ($songdirtemp != ".") && ($songdirtemp != "..")){
 				$songfiles = scandir($songdir);
-
 				foreach($songfiles as $file){
 					$info = pathinfo($songdir."/".$file);
-					//echo $file."<br>";
 					//If sm file exist and not a hidden file.
-					if(@$info['extension'] == 'sm' && $file{0} != '.'){
-
+					if((@$info['extension'] == 'sm' || @$info['extension'] == 'dwi' || @$info['extension'] == 'ssc') && $file{0} != '.'){
+						echo $file."\n";
 						//Found a simfile that was utf16, hack to handle this.
                                                 //Do not know a better way to do this. Shelling out instead! #bashlyfe
                                                 $cmd = "file -ib \"".$songdir."/".$file."\"";
@@ -124,7 +132,15 @@ class Scan extends CI_Controller {
                                                         echo $songdir."/".$file.": UTF16, converted to UTF8\n";
                                                 }//end utf-16 hackjob fix
 
+						if(@$info['extension'] == 'dwi'){
+							if(file_exists($songdir."/".$info['filename']."sm")){
+								echo "SM exists, use that instead of DWI";
+								break;
+							}
+						}
+
                                                 $fh = file($songdir."/".$file);
+
 
 						//If SM file exists, but is empty, check for dwi file.
 						if(filesize($songdir."/".$file) == 0){
@@ -149,7 +165,8 @@ class Scan extends CI_Controller {
 						}
 
 						foreach($title as $line){
-							$cut = explode(':', $line);
+							//Had to add strip_tags cause yolomania pack is stupid
+							$cut = explode(':', strip_tags($line));
 							//print_r($cut);
 							if(fnmatch("*#TITLE",$cut[0]))
 								$title = $this->db->escape(explode(";",$cut[1])[0]);
@@ -175,11 +192,9 @@ class Scan extends CI_Controller {
 							$credit = "''";
 
 						//if(is_array($title))
-						//	print_r($title);
-
+						//echo $title."\n";
 						$sql = "INSERT INTO Songs (`title`, `subtitle`,`titletranslit`,`subtitletranslit`,`artist`,`credit`, `hash`)
 							VALUES ($title, $subtitle, $titletrans, $subtitletrans, $artist, $credit, '$hash')";
-
 						$query = $this->db->query($sql);
 						$songid = $this->db->insert_id();
 
