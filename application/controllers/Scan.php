@@ -32,7 +32,7 @@ class Scan extends CI_Controller {
 				$name = $this->db->escape($info['filename']);
 				$type = $this->db->escape(@$info['extension']);
 				//If there is an extension then add it to db;
-				if ($type != 'NULL'){
+				if ($type == 'zip' || $type = 'rar'){
 					$filesize = filesize($file);
 					$sql = "INSERT IGNORE into Packs (`packname`, `filetype`, `size_bytes`) VALUES ($name, $type, '$filesize')";
 					//DB Insert, packname is UNIQUE.
@@ -68,8 +68,10 @@ class Scan extends CI_Controller {
 				if ($zip->open($file) === TRUE) {
     					//$zip->extractTo($scandir);
 					for ($i = 0; $i < $zip->numFiles; $i++){
-						if(stripos($zip->getNameIndex($i), ".sm") || stripos($zip->getNameIndex($i), ".dwi") || stripos($zip->getNameIndex($i), ".ssc")){
-				        		//Backs with sm.old files....
+						if(stripos($zip->getNameIndex($i), ".png") || stripos($zip->getNameIndex($i), ".jpg") ||
+					  	   	stripos($zip->getNameIndex($i), ".sm") || stripos($zip->getNameIndex($i), ".dwi") ||
+							stripos($zip->getNameIndex($i), ".ssc")){
+				        		//Packs with sm.old files....
 							if(!stripos($zip->getNameIndex($i), ".old")){
 								$zip->extractTo($scandir, array($zip->getNameIndex($i)));
 								//echo $zip->getNameIndex($i)."\n";
@@ -88,10 +90,11 @@ class Scan extends CI_Controller {
 					$query = $this->db->query($sql);
 
 					//Delete extracted directory
-					$this->functions->rrmdir($scandir.$foldername);
+					//$this->functions->rrmdir($scandir.$foldername);
 					echo "Scanned: ".$pack['packname']."\n";
 				} else
     					echo 'Failed to open: '.$pack['packname']."\n";
+			//one pack at a time
 			exit();
 			}//end if pack is zip
 		}//end foreach pack
@@ -152,6 +155,9 @@ class Scan extends CI_Controller {
 								continue;
 						}
 
+						//Use python to parse the file first, if it fails, then fallback to this...
+						//Also this should be its own function.
+
 						$artist = preg_grep("/ARTIST/", $fh);
                                                 $title = preg_grep("/TITLE/", $fh);
                                                 $credit = preg_grep("/CREDIT/", $fh);
@@ -159,6 +165,34 @@ class Scan extends CI_Controller {
 						$subtitle = "''";
 						$titletrans = "''";
 						$subtitletrans = "''";
+						$bannerhash = "";
+
+
+
+						$banner = preg_grep("/BANNER/", $fh);
+						//$notes = array_search('#NOTES:',$fh);
+						//$notes = preg_match("/NOTES\n(.*)\n(.*)\n(.*)\n(.*)/", $fh, $matches);
+
+						//echo $notes."\n";
+						//exit();
+
+
+
+						foreach($banner as $line){
+							$cut = explode(':',$line);
+							if(fnmatch("*#BANNER",$cut[0]))
+								$banner = explode(';',$cut[1])[0];
+							if( !empty($banner) && file_exists($songdir."/".$banner)){
+								$ext = pathinfo($songdir."/".$banner)['extension'];
+								$bannerhash = md5($songdir."/".$banner.time()).".".$ext;
+								echo $bannerhash."\n";
+								copy($songdir."/".$banner, "static/images/songs/".$bannerhash);
+							} else {
+								echo $songdir."/".$banner." missing";
+							}
+
+						}
+
 						foreach($artist as $line){
 							$cut = explode(':',$line);
 							if(fnmatch("*#ARTIST",$cut[0]))
@@ -194,8 +228,8 @@ class Scan extends CI_Controller {
 
 						//if(is_array($title))
 						//echo $title."\n";
-						$sql = "INSERT INTO Songs (`title`, `subtitle`,`titletranslit`,`subtitletranslit`,`artist`,`credit`, `hash`)
-							VALUES ($title, $subtitle, $titletrans, $subtitletrans, $artist, $credit, '$hash')";
+						$sql = "INSERT INTO Songs (`title`, `subtitle`,`titletranslit`,`subtitletranslit`,`artist`,`credit`,`banner`,`hash`)
+							VALUES ($title, $subtitle, $titletrans, $subtitletrans, $artist, $credit,'$bannerhash','$hash')";
 						$query = $this->db->query($sql);
 						$songid = $this->db->insert_id();
 
