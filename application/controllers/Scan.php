@@ -177,17 +177,21 @@ class Scan extends CI_Controller {
                                                         $titletrans = $this->db->escape($song['titletranslit']);
                                                         $subtitletrans = $this->db->escape($song['subtitletranslit']);
                                                         $bannerhash = "";
-							$banner = $this->db->escape($song['banner']);
+							$banner = $song['banner'];
 							
                                                         if( !empty($banner) && file_exists($songdir."/".$banner)){							
 								$ext = pathinfo($songdir."/".$banner)['extension'];
 								$bannerhash = md5($songdir."/".$banner.time()).".".$ext;
 								copy($songdir."/".$banner, "static/images/songs/".$bannerhash);
+							} else {
+								$banner = "";
 							}
 
+							$bgchanges = $song['bgchanges'] ? 1 : 0;
+							$fgchanges = $song['fgchanges'] ? 1 : 0;
 
-                                                        $sql = "INSERT INTO Songs (`title`, `subtitle`,`titletranslit`,`subtitletranslit`,`artist`,`credit`,`banner`,`hash`)
-                                                                VALUES ($title, $subtitle, $titletrans, $subtitletrans, $artist, $credit,'$bannerhash','$hash')";
+                                                        $sql = "INSERT INTO Songs (`title`, `subtitle`,`titletranslit`,`subtitletranslit`,`artist`,`credit`,`banner`,`bgchanges`,`fgchanges`,`hash`)
+                                                                VALUES ($title, $subtitle, $titletrans, $subtitletrans, $artist, $credit,'$bannerhash','$bgchanges','$fgchanges','$hash')";
                                                         
 							$query = $this->db->query($sql);
                                                         $songid = $this->db->insert_id();
