@@ -10,10 +10,39 @@ class Pack extends CI_Controller {
 
 		if(is_numeric($this->input->get('id'))){
 			$id = $this->input->get('id');
-			$sql = "SELECT * FROM Songs as s INNER JOIN PackSongs as ps ON ps.songid = s.id WHERE ps.packid = $id";
+			$sql = "SELECT *,s.id as id,c.id as chart FROM Songs as s INNER JOIN PackSongs as ps ON ps.songid = s.id
+				INNER JOIN Charts as c on c.songid = s.id WHERE ps.packid = $id";
 
                 $query = $this->db->query($sql);
-                $data['songs'] = $query->result_array();
+                $results = $query->result_array();
+		$songs = Array();
+
+		foreach($results as $s){
+			$songs[$s['id']]['artist'] = $s['artist'];
+			$songs[$s['id']]['title'] = $s['title'];
+			$songs[$s['id']]['subtitle'] = $s['subtitle'];
+			$songs[$s['id']]['titletranslit'] = $s['titletranslit'];
+			$songs[$s['id']]['subtitletranslit'] = $s['subtitletranslit'];
+			$songs[$s['id']]['credit'] = $s['credit'];
+                        $songs[$s['id']]['banner'] = $s['banner'];
+                        $songs[$s['id']]['bgchanges'] = $s['bgchanges'];
+                        $songs[$s['id']]['fgchanges'] = $s['fgchanges'];
+                        $songs[$s['id']]['date'] = $s['date'];
+
+			$songs[$s['id']]['notes'][$s['chart']]['type'] = $s['type'];
+			$songs[$s['id']]['notes'][$s['chart']]['meter'] = $s['meter'];
+                        $songs[$s['id']]['notes'][$s['chart']]['holds'] = $s['holds'];
+                        $songs[$s['id']]['notes'][$s['chart']]['jumps'] = $s['jumps'];
+                        $songs[$s['id']]['notes'][$s['chart']]['mines'] = $s['mines'];
+                        $songs[$s['id']]['notes'][$s['chart']]['rolls'] = $s['rolls'];
+                        $songs[$s['id']]['notes'][$s['chart']]['taps'] = $s['taps'];
+		}
+
+		$data['songs'] = $songs;
+
+		echo "<pre>";
+		//print_r($songs);
+		echo "</pre>";
 
 		$sql = "SELECT * from Packs Where id = $id";
 		$query = $this->db->query($sql);

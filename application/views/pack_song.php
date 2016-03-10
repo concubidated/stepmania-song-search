@@ -120,6 +120,9 @@ echo "<th>Song Title</th>";
 echo "<th>Artist</th>";
 echo "<th>Banner</th>";
 foreach($songs as $song){
+	echo "<pre>";
+	print_r($song);
+	echo "</pre>";
 	echo "<tr>";
 	echo "<td>$song[title]</td><td>$song[artist]</td>";
 	echo "<td>";
