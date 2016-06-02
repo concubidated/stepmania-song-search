@@ -32,7 +32,7 @@ class Scan extends CI_Controller {
 				$name = $this->db->escape($info['filename']);
 				$type = $this->db->escape(@$info['extension']);
 				//If there is an extension then add it to db;
-				if ($type == 'zip' || $type = 'rar'){
+				if ($type == "'zip'" || $type == "'rar'"){
 					$filesize = filesize($file);
 					$sql = "INSERT IGNORE into Packs (`packname`, `filetype`, `size_bytes`) VALUES ($name, $type, '$filesize')";
 					//DB Insert, packname is UNIQUE.
@@ -41,7 +41,7 @@ class Scan extends CI_Controller {
 			}//end packname greater then 2 charactors. (. and .. directories)
 
 		}
-	echo "All 'new' packs added to database and marked for scanning.";
+	echo "All 'new' packs added to database and marked for scanning.\n";
 	}
 
 
@@ -84,18 +84,19 @@ class Scan extends CI_Controller {
 					//exit();
 					//echo $pack['packname'];
 					//If ZIP extracted correctly, scan the directory.
+					echo "Scanning: $pack[packname]\n";
 					$this->scanDirectory($scandir.$foldername, $pack['id']);
 					//exit();
 					$sql = "UPDATE Packs SET `scanned` = '1' WHERE id = $pack[id]";
 					$query = $this->db->query($sql);
 
 					//Delete extracted directory
-					//$this->functions->rrmdir($scandir.$foldername);
+					$this->functions->rrmdir($scandir.$foldername);
 					echo "Scanned: ".$pack['packname']."\n";
 				} else
     					echo 'Failed to open: '.$pack['packname']."\n";
 			//one pack at a time
-			exit();
+			//exit();
 			}//end if pack is zip
 		}//end foreach pack
 
@@ -142,6 +143,7 @@ class Scan extends CI_Controller {
 						if(strcasecmp($info['extension'], 'dwi') == '0'){
 							//print_r($info);
 							if(file_exists($songdir."/".$info['filename'].".sm")){
+								echo "$info[filename].";
 								echo "sm exists, use that instead of .dwi \n";
 								continue;
 							}
@@ -164,11 +166,9 @@ class Scan extends CI_Controller {
 						$scriptdir = getcwd()."/scripts/";
 						$cmd = 'python '.$scriptdir.'sm_parse.py "'.$songdir.'/'.$file.'"';
 						$results = shell_exec($cmd);
-
-						if($results != "ERROR"){
-							$results = json_decode($results, TRUE);
+						$results = json_decode($results, TRUE);
+						if(is_array($results)){
 							$song = $results['song'];
-	
 							$artist = $this->db->escape($song['artist']);
                                                         $title = $this->db->escape($song['title']);
                                                         $credit = $this->db->escape($song['credit']);
@@ -220,6 +220,7 @@ class Scan extends CI_Controller {
 							}//end foreach type of chart
 
 						} else {
+							echo "sm_parse.py failed, trying old method.";
 							$artist = preg_grep("/ARTIST/", $fh);
 							$title = preg_grep("/TITLE/", $fh);
 							$credit = preg_grep("/CREDIT/", $fh);
