@@ -118,7 +118,7 @@ echo "<th>Pack Name</th>";
 echo "<th>Size</th>";
 echo "<th>Song Count</th>";
 foreach($packs as $pack){
-	echo '<tr><td><a href="pack?id='.$pack['id'].'">'."$pack[packname]</a></td><td>".round($pack['size']/1024/1024)."</td><td>$pack[songcount] Songs</td></tr>";
+	echo '<tr><td><a href="/pack/?id='.$pack['id'].'">'."$pack[packname]</a></td><td>".round($pack['size']/1024/1024)."</td><td>$pack[songcount] Songs</td></tr>";
 }
 echo "</table>";
 ?>

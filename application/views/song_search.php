@@ -107,8 +107,9 @@ h2 {
 </style>
 
 <?php
-
-
+echo "<pre>";
+print_r($results);
+echo "</pre>";
 echo "<table>";
 echo "<th>Title</th>";
 echo "<th>Artist</th>";
@@ -119,7 +120,8 @@ foreach($results as $song){
 	echo "<td>$song[title]</td>";
         echo "<td>$song[artist]</td>";
         if ($song['banner']) echo "<td><img src=\"/static/images/songs/$song[banner]\"</td>"; else echo "<td></td>";
-        echo "<td><a href=\"/index.php/pack?id=$song[id]\">$song[packname]</a></td>";
+        echo "<td><a href=\"/pack/?id=$song[id]\">$song[packname]</a></td>";
+			//print_r($song);
 	echo "</tr>";
 }
 

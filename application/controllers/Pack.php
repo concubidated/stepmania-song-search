@@ -11,7 +11,7 @@ class Pack extends CI_Controller {
 		if(is_numeric($this->input->get('id'))){
 			$id = $this->input->get('id');
 			$sql = "SELECT *,s.id as id,c.id as chart FROM Songs as s INNER JOIN PackSongs as ps ON ps.songid = s.id
-				INNER JOIN Charts as c on c.songid = s.id WHERE ps.packid = $id";
+				LEFT JOIN Charts as c on c.songid = s.id WHERE ps.packid = $id";
 
                 $query = $this->db->query($sql);
                 $results = $query->result_array();
@@ -29,6 +29,7 @@ class Pack extends CI_Controller {
                         $songs[$s['id']]['fgchanges'] = $s['fgchanges'];
                         $songs[$s['id']]['date'] = $s['date'];
 
+			$songs[$s['id']]['notes'][$s['chart']]['difficulty'] = $s['difficulty'];
 			$songs[$s['id']]['notes'][$s['chart']]['type'] = $s['type'];
 			$songs[$s['id']]['notes'][$s['chart']]['meter'] = $s['meter'];
                         $songs[$s['id']]['notes'][$s['chart']]['holds'] = $s['holds'];
@@ -40,9 +41,9 @@ class Pack extends CI_Controller {
 
 		$data['songs'] = $songs;
 
-		echo "<pre>";
+		//echo "<pre>";
 		//print_r($songs);
-		echo "</pre>";
+		//echo "</pre>";
 
 		$sql = "SELECT * from Packs Where id = $id";
 		$query = $this->db->query($sql);
@@ -68,6 +69,20 @@ class Pack extends CI_Controller {
 
 
 	public function Search(){
+
+		if($this->input->get('artist')){
+
+			$artist = $this->db->escape_str($this->input->get('artist'));
+                        $sql = "SELECT p.id, p.packname, s.title, s.banner, s.artist from Songs as s INNER JOIN PackSongs as ps on ps.songid = s.id INNER JOIN Packs as p
+                                on p.id = ps.packid WHERE s.artist LIKE '%$artist%' ";
+
+                        //echo $sql;
+
+                        $query = $this->db->query($sql);
+
+                        $data['results'] = $query->result_array();
+                        $this->load->view('song_search', $data);
+		}
 
 		if($this->input->get('q')){
 
