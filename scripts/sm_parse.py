@@ -62,7 +62,7 @@ except:
 try:
 	simfile['song']['bgchanges'] = sim['BGCHANGES']
 except:
-	simfile['bgchanges'] = ""
+	simfile['song']['bgchanges'] = ""
 
 try:
 	simfile['song']['fgchanges'] = sim['FGCHANGES']
