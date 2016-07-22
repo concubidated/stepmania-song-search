@@ -129,12 +129,18 @@ class Scan extends CI_Controller {
 					  || strcasecmp(@$info['extension'],'ssc') == '0') && $file{0} != '.'){
 						//echo $file."\n";
 						//Found a simfile that was utf16, hack to handle this.
-                                                //Do not know a better way to do this. Shelling out instead! #bashlyfe
-                                                $cmd = "file -ib \"".$songdir."/".$file."\"";
-						$format = shell_exec(escapeshellcmd($cmd));
-						if(strpos($format,"="))
-							$format = explode("=",$format)[1];
-						if($format == "utf-16le\n"){
+						$fullfile = $songdir."/".$file;
+						#$cmd = "file -ib \"{$fullfile}\"";
+						#$format = shell_exec(escapeshellcmd($cmd));
+
+						$finfo = new finfo(FILEINFO_MIME);
+						$mime = $finfo->file($fullfile);
+						#example: text/plain; charset=us-ascii
+
+						if(strpos($mime,"=")){
+							$mime = explode("=",$mime)[1];
+						}
+						if($mime == "utf-16le"){
                                                         $cmd = 'iconv -f utf16 -t utf8 "'.$songdir."/".$file.'" > "'.$songdir."/".$file.'"';
 							shell_exec($cmd);
                                                         echo $songdir."/".$file.": UTF16, converted to UTF8\n";
@@ -148,6 +154,8 @@ class Scan extends CI_Controller {
 								continue;
 							}
 						}
+
+						#echo $file."\n";
                                                 $fh = file($songdir."/".$file);
 
 						//If SM file exists, but is empty, check for dwi file.

@@ -108,7 +108,7 @@ h2 {
 
 <?php
 echo "<pre>";
-print_r($results);
+//print_r($results);
 echo "</pre>";
 echo "<table>";
 echo "<th>Title</th>";
