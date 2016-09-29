@@ -4,9 +4,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 
-define('NEW_DIRECTORY', '/home/stepmaniaonline/search.stepmania-online.com/static/new/');
-define('SCANNING_DIRECTORY', '/home/stepmaniaonline/search.stepmania-online.com/static/scanning/');
+#define('NEW_DIRECTORY', '/home/stepmaniaonline/search.stepmania-online.com/static/new/');
+#define('SCANNING_DIRECTORY', '/home/stepmaniaonline/search.stepmania-online.com/static/scanning/');
 
+define('NEW_DIRECTORY', '/data/search.stepmania-online.com/static/new/');
+define('SCANNING_DIRECTORY', '/data/search.stepmania-online.com/static/scanning/');
+
+define('PYTHON_PATH', '/usr/local/lib/python2.7/dist-packages/');
 
 /*
 |--------------------------------------------------------------------------

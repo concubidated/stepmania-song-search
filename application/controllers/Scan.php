@@ -23,7 +23,13 @@ class Scan extends CI_Controller {
 	public function updateDatabase(){
 
 		$newdir = NEW_DIRECTORY;
+		if(!file_exists($newdir)){
+			echo "Please configure NEW_DIRECTORY in config/constants.php";
+			break;
+		}
+			
 		$newlist = scandir($newdir);
+
 
 		foreach($newlist as $pack){
 			if(strlen($pack) > 2){
@@ -140,11 +146,23 @@ class Scan extends CI_Controller {
 						if(strpos($mime,"=")){
 							$mime = explode("=",$mime)[1];
 						}
-						if($mime == "utf-16le"){
+						if(($mime != "utf-8") && ($mime != "us-ascii")){
+							echo $mime."\n";
+							if($mime == "binary"){
+								continue;
+							}
+						}
+
+						if($mime == "utf-16le" || $mime == "utf-16be"){
                                                         $cmd = 'iconv -f utf16 -t utf8 "'.$songdir."/".$file.'" > "'.$songdir."/".$file.'"';
 							shell_exec($cmd);
                                                         echo $songdir."/".$file.": UTF16, converted to UTF8\n";
-                                                }//end utf-16 hackjob fix
+                                                }elseif ($mime == "iso-8859-1"){
+							$cmd = 'iconv -f iso-8859-1 -t utf8 "'.$songdir."/".$file.'" > "'.$songdir."/".$file.'"';
+                                                        shell_exec($cmd);
+                                                        echo $songdir."/".$file.": iso-8859-1 converted to UTF8\n";
+
+						}
 
 						if(strcasecmp($info['extension'], 'dwi') == '0'){
 							//print_r($info);
@@ -168,9 +186,9 @@ class Scan extends CI_Controller {
 						}
 
 						//Use python to parse the file first, if it fails, then fallback to the php method below...
-						//Set PYTHONPATH becuase I am useing local modules
-						$home = posix_getpwuid(posix_getuid())['dir'];
-						putenv("PYTHONPATH=$home/local/lib/python2.6/site-packages/");
+						//Set PYTHONPATH becuase I am using local modules
+						#$home = posix_getpwuid(posix_getuid())['dir'];
+						#putenv("PYTHONPATH=PYTHON_PATH");
 						$scriptdir = getcwd()."/scripts/";
 						$cmd = 'python '.$scriptdir.'sm_parse.py "'.$songdir.'/'.$file.'"';
 						$results = shell_exec($cmd);
@@ -228,7 +246,7 @@ class Scan extends CI_Controller {
 							}//end foreach type of chart
 
 						} else {
-							echo "sm_parse.py failed, trying old method.";
+							echo "sm_parse.py failed, trying old method: ".$file."\n";
 							$artist = preg_grep("/ARTIST/", $fh);
 							$title = preg_grep("/TITLE/", $fh);
 							$credit = preg_grep("/CREDIT/", $fh);
@@ -249,7 +267,7 @@ class Scan extends CI_Controller {
 									echo $bannerhash."\n";
 									copy($songdir."/".$banner, "static/images/songs/".$bannerhash);
 								} else {
-									echo $songdir."/".$banner." missing";
+									echo $songdir."/".$banner." missing\n";
 								}
 							}//end banner parser
 
