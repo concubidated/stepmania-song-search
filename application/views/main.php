@@ -47,7 +47,7 @@
 	<tr>
 		<td><?php echo $song['title']; ?></td>
                 <td><?php echo $song['artist']; ?></td>
-                <td><?php if($song['banner']): ?><img style="max-height:100px;" class="img-responsive img-rounded" src="static/images/songs/<?php echo $song['banner']; ?>"</img><?php endif; ?></td>
+                <td><?php if($song['banner']): ?><img style="max-height:100px;" class="img-responsive img-rounded" src="/static/images/songs/<?php echo $song['banner']; ?>"</img><?php endif; ?></td>
                 <td><a href="http://simfiles.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><?php echo $song['packname']; ?></a></td>
 
 	</tr>
@@ -61,15 +61,17 @@
 		<th>Pack</th>
 		<th>Size</th>
 		<th>Song Count</th>
+		<th>Download</th>
 	      </tr>
 	    </thead>
 
 		<tbody>
 		<?php foreach($results as $pack): ?>
 		<tr>
-			<td><a href="http://simfiles.stepmania-online.com/<?php echo $pack['packname'].".zip"; ?>" ><?php echo $pack['packname']; ?></a></td>
+			<td><a href="/pack/id/<?php echo $pack['id']; ?>" ><?php echo $pack['packname']; ?></a></td>
 			<td><?php echo round($pack['size']/1024/1024); ?> MB</td>
 			<td><?php echo $pack['songcount'] ?></td>
+			<td class="text-center"><a href="http://simfiles.stepmania-online.com/<?php echo $pack['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
 
 		</tr>
 		<?php endforeach; ?>

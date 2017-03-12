@@ -121,4 +121,16 @@ class Pack extends CI_Controller {
 	}
 
 
+	public function Id($id){
+		if(is_numeric($id)){
+
+			$data['songs'] = $this->db_model->packSongInfo($id);
+			$data['pack'] = $this->db_model->packInfo($id);
+			$this->load->view('pack_song', $data);
+		}
+
+	}
+
+
 }
+
