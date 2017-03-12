@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2016, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -68,6 +68,13 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 	 * @var	string
 	 */
 	protected $_lock_key;
+
+	/**
+	 * Key exists flag
+	 *
+	 * @var bool
+	 */
+	protected $_key_exists = FALSE;
 
 	// ------------------------------------------------------------------------
 
@@ -124,7 +131,7 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 	{
 		if (empty($this->_config['save_path']))
 		{
-			return $this->_failure;
+			return $this->_fail();
 		}
 
 		$redis = new Redis();
@@ -146,7 +153,7 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 			return $this->_success;
 		}
 
-		return $this->_failure;
+		return $this->_fail();
 	}
 
 	// ------------------------------------------------------------------------
@@ -166,12 +173,17 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 			// Needed by write() to detect session_regenerate_id() calls
 			$this->_session_id = $session_id;
 
-			$session_data = (string) $this->_redis->get($this->_key_prefix.$session_id);
+			$session_data = $this->_redis->get($this->_key_prefix.$session_id);
+
+			is_string($session_data)
+				? $this->_key_exists = TRUE
+				: $session_data = '';
+
 			$this->_fingerprint = md5($session_data);
 			return $session_data;
 		}
 
-		return $this->_failure;
+		return $this->_fail();
 	}
 
 	// ------------------------------------------------------------------------
@@ -187,42 +199,38 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 	 */
 	public function write($session_id, $session_data)
 	{
-		if ( ! isset($this->_redis))
+		if ( ! isset($this->_redis, $this->_lock_key))
 		{
-			return $this->_failure;
+			return $this->_fail();
 		}
 		// Was the ID regenerated?
 		elseif ($session_id !== $this->_session_id)
 		{
 			if ( ! $this->_release_lock() OR ! $this->_get_lock($session_id))
 			{
-				return $this->_failure;
+				return $this->_fail();
 			}
 
-			$this->_fingerprint = md5('');
+			$this->_key_exists = FALSE;
 			$this->_session_id = $session_id;
 		}
 
-		if (isset($this->_lock_key))
+		$this->_redis->setTimeout($this->_lock_key, 300);
+		if ($this->_fingerprint !== ($fingerprint = md5($session_data)) OR $this->_key_exists === FALSE)
 		{
-			$this->_redis->setTimeout($this->_lock_key, 300);
-			if ($this->_fingerprint !== ($fingerprint = md5($session_data)))
+			if ($this->_redis->set($this->_key_prefix.$session_id, $session_data, $this->_config['expiration']))
 			{
-				if ($this->_redis->set($this->_key_prefix.$session_id, $session_data, $this->_config['expiration']))
-				{
-					$this->_fingerprint = $fingerprint;
-					return $this->_success;
-				}
-
-				return $this->_failure;
+				$this->_fingerprint = $fingerprint;
+				$this->_key_exists = TRUE;
+				return $this->_success;
 			}
 
-			return ($this->_redis->setTimeout($this->_key_prefix.$session_id, $this->_config['expiration']))
-				? $this->_success
-				: $this->_failure;
+			return $this->_fail();
 		}
 
-		return $this->_failure;
+		return ($this->_redis->setTimeout($this->_key_prefix.$session_id, $this->_config['expiration']))
+			? $this->_success
+			: $this->_fail();
 	}
 
 	// ------------------------------------------------------------------------
@@ -241,10 +249,10 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 			try {
 				if ($this->_redis->ping() === '+PONG')
 				{
-					isset($this->_lock_key) && $this->_redis->delete($this->_lock_key);
-					if ($this->_redis->close() === $this->_failure)
+					$this->_release_lock();
+					if ($this->_redis->close() === FALSE)
 					{
-						return $this->_failure;
+						return $this->_fail();
 					}
 				}
 			}
@@ -283,7 +291,7 @@ class CI_Session_redis_driver extends CI_Session_driver implements SessionHandle
 			return $this->_success;
 		}
 
-		return $this->_failure;
+		return $this->_fail();
 	}
 
 	// ------------------------------------------------------------------------
