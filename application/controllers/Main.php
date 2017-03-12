@@ -15,7 +15,7 @@ class Main extends CI_Controller {
 	public function index(){
 		$data['title'] = "Stepmania Search";
 
-		$search_post = $this->input->post('search');
+		$search_post = urlencode($this->input->post('search'));
 		$type_post = $this->input->post('type');
 
 		if(!$type_post) $type_post="title";
