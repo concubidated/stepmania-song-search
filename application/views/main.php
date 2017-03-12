@@ -1,11 +1,3 @@
-<?php
-
-
-?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-
-
 <div class="row">
   <div class="col-lg-8 col-lg-offset-2">
     <form class="" action="/" method="POST">
@@ -30,7 +22,7 @@
 <?php if(isset($results)): ?>
 	<div class="container">
 	  <h2 style="color: #fff;"><?php echo sizeof($results); ?> Results for <?php echo $type?>: <?php echo $search?></h2>
-	  <table style="background-color: #fff;" class="table">
+	  <table style="background-color: #f5f5f5;" class="table">
     
 	<?php if($type == "title" || $type == "artist") : ?>
     	<thead>
@@ -39,6 +31,7 @@
 		<th>Artist</th>
 		<th>Banner</th>
 		<th>Pack</th>
+		<th class="text-center">Download</th>
 	      </tr>
 	</thead>
 
@@ -46,9 +39,10 @@
 	<?php foreach($results as $song): ?>
 	<tr>
 		<td><?php echo $song['title']; ?></td>
-                <td><?php echo $song['artist']; ?></td>
-                <td><?php if($song['banner']): ?><img style="max-height:100px;" class="img-responsive img-rounded" src="/static/images/songs/<?php echo $song['banner']; ?>"</img><?php endif; ?></td>
-                <td><a href="http://simfiles.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><?php echo $song['packname']; ?></a></td>
+		<td><?php echo $song['artist']; ?></td>
+		<td><?php if($song['banner']): ?><img style="max-height:100px;" class="img-responsive img-rounded" src="/static/images/songs/<?php echo $song['banner']; ?>"</img><?php endif; ?></td>
+		<td><a href="/pack/id/<?php echo urlencode($song['packname']); ?>" ><?php echo $song['packname']; ?></a></td>
+		<td class="text-center"><a href="http://simfiles.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
 
 	</tr>
 	<?php endforeach; ?>
@@ -61,7 +55,7 @@
 		<th>Pack</th>
 		<th>Size</th>
 		<th>Song Count</th>
-		<th>Download</th>
+		<th class="text-center">Download</th>
 	      </tr>
 	    </thead>
 
@@ -78,19 +72,9 @@
 	<?php endif; ?>
 
 
-
-
-
-
-
     </tbody>
   </table>
 </div>
 
-<div class="container">
-<pre>
-<?php print_r($results) ?>
-</pre>
-</div>
 
 <?php endif; ?>
