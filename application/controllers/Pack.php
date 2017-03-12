@@ -122,7 +122,11 @@ class Pack extends CI_Controller {
 
 
 	public function Id($id){
-		if(is_numeric($id)){
+
+
+		if(!is_numeric($id))
+			$id = $this->db_model->getPackIdFromName(urldecode($id));
+		if($id){
 
 			$data['songs'] = $this->db_model->packSongInfo($id);
 			$data['pack'] = $this->db_model->packInfo($id);

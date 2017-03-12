@@ -37,6 +37,20 @@ class DB_Model extends CI_Model {
 		return($query->result_array());
 	}
 
+	public function getPackIdFromName($id){
+		$id = $this->db->escape($id);
+		#$sql = "SELECT p.id, p.packname, p.size_bytes AS size, 
+		#	(SELECT COUNT(*) FROM PackSongs AS ps WHERE ps.packid = p.id) AS songcount
+		#	FROM Packs AS p
+		#	INNER JOIN PackSongs AS ps ON ps.packid = p.id
+		#	WHERE p.packname = $id
+		#	GROUP BY p.id";
+		$sql = "SELECT * FROM Packs WHERE packname = $id";
+			$query = $this->db->query($sql);
+			return $query->row()->id;
+
+	}
+
 	public function packSongInfo($id){
 		if($id){
 			$sql = "SELECT *,s.id as id,c.id as chart FROM Songs as s INNER JOIN PackSongs as ps ON ps.songid = s.id

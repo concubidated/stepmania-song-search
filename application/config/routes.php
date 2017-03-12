@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'main/index';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['pack/id/(:num)'] = 'pack/id/$1';
+$route['pack/id/(:any)'] = 'pack/id/$1';
 $route['title/(:any)'] = 'main/search/title/$1';
 $route['artist/(:any)'] = 'main/search/artist/$1';
 $route['packs/(:any)'] = 'main/search/packs/$1';

@@ -1,11 +1,3 @@
-<?php
-
-
-?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-
-
 <div class="row">
   <div class="col-lg-8 col-lg-offset-2">
     <form class="" action="/" method="POST">
