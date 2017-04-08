@@ -1,3 +1,13 @@
 body {
 	background-color: #333333;
 }
+
+.smo-logo {
+	margin-top:20px;
+}
+
+
+.table tbody>tr>td.vertical-align-middle {
+	vertical-align: middle;
+}
+

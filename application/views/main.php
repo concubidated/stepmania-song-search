@@ -38,11 +38,11 @@
 	<tbody>
 	<?php foreach($results as $song): ?>
 	<tr>
-		<td><?php echo $song['title']; ?></td>
-		<td><?php echo $song['artist']; ?></td>
+		<td class="vertical-align-middle"><?php echo $song['title']; ?></td>
+		<td class="vertical-align-middle"><?php echo $song['artist']; ?></td>
 		<td><?php if($song['banner']): ?><img style="max-height:100px;" class="img-responsive img-rounded" src="/static/images/songs/<?php echo $song['banner']; ?>"</img><?php endif; ?></td>
-		<td><a href="/pack/id/<?php echo urlencode($song['packname']); ?>" ><?php echo $song['packname']; ?></a></td>
-		<td class="text-center"><a href="http://simfiles.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
+		<td class="vertical-align-middle" ><a href="/pack/id/<?php echo urlencode($song['packname']); ?>" ><?php echo $song['packname']; ?></a></td>
+		<td class="text-center vertical-align-middle"><a href="http://simfiles.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><i class="material-icons">file_download</i></a></td>
 
 	</tr>
 	<?php endforeach; ?>
