@@ -9,6 +9,34 @@ class DB_Model extends CI_Model {
 
 
 
+
+	public function GetAllSongInfo($search){
+                $search = urldecode($this->db->escape_str($search));
+                $sql = "SELECT s.id, p.id as packid, p.packname, s.title, s.banner, s.artist, s.subtitle, s.credit, s.bgchanges, s.fgchanges, s.hash from Songs as s
+			INNER JOIN PackSongs as ps on ps.songid = s.id
+			INNER JOIN Packs as p on p.id = ps.packid
+			WHERE s.title LIKE '%$search%' ";
+
+                $query = $this->db->query($sql);
+		$songs = $query->result_array();
+		$songArray = [];
+		foreach($songs as $song ){
+			$chartArray = [];
+			$sql = "SELECT c.type, c.difficulty, c.meter, c.taps, c.jumps, c.mines, c.holds, c.rolls, c.id FROM Charts as c INNER JOIN Songs as s on c.songid =  s.id where s.id = $song[id]";
+			$query=$this->db->query($sql);
+			foreach($query->result_array() as $chart){
+				$chartArray[$chart['id']] = $chart;
+			}
+
+			$song['charts'] = $chartArray;
+			$songArray[$song['id']] = $song;
+
+		}
+                return($songArray);
+
+
+	}
+
 	public function searchByType($search, $type){
 
 		$type = $this->db->escape_str($type);
