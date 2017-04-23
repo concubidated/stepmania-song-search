@@ -244,7 +244,9 @@ class Scan extends CI_Controller {
 									$query = $this->db->query($sql);
 								}//end for each chart
 							}//end foreach type of chart
-
+							empty($chart);
+							//If parsing works now need to try the next file.
+							break;
 						} else {
 							echo "sm_parse.py failed, trying old method: ".$file."\n";
 							$artist = preg_grep("/ARTIST/", $fh);
