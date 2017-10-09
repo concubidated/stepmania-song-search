@@ -114,13 +114,17 @@ class DB_Model extends CI_Model {
 		}
 	}
 
-	public function packInfo($id){
+	public function packInfo($id=FALSE){
 		if($id){
 			$sql = "SELECT * from Packs Where id = $id";
 			$query = $this->db->query($sql);
 			return($query->row());
 
+		} else {
+			$sql = "SELECT packname as pack, size_bytes as size,date, CONCAT('http://simfiles.stepmania-online.com/',packname,'.zip') as url from Packs";
+			$query = $this->db->query($sql);
+			return($query->result_array());
 		}
 	}
-
+	
 }

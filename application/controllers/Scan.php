@@ -25,7 +25,7 @@ class Scan extends CI_Controller {
 		$newdir = NEW_DIRECTORY;
 		if(!file_exists($newdir)){
 			echo "Please configure NEW_DIRECTORY in config/constants.php";
-			break;
+			exit();
 		}
 			
 		$newlist = scandir($newdir);

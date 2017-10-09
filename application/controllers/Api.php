@@ -12,6 +12,16 @@ class Api extends CI_Controller {
 		//$this->output->enable_profiler(true);
 	}
 
+
+        public function packList(){
+
+                $results = $this->db_model->packInfo();
+                #echo "<pre>";
+		print_r(json_encode($results, JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT));
+                #echo "</pre>";
+
+        }
+
 	public function song($search){
 
 
@@ -20,9 +30,9 @@ class Api extends CI_Controller {
 		if($search){
 			$results = $this->db_model->getAllSongInfo($search);
 
-			echo "<pre>";
+			#echo "<pre>";
 			print_r(json_encode($results, JSON_PRETTY_PRINT));
-			echo "</pre>";
+			#echo "</pre>";
 		
 		}
 
