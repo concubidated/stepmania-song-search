@@ -15,6 +15,6 @@ class Link extends CI_Controller {
 
 		$time = 300;
 		$url = $this->functions->generate_url($link, 300);
-		//redirect($url);
+		redirect($url);
 	}
 }
