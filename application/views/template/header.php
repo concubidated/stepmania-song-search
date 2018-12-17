@@ -35,6 +35,5 @@
 
 
 	<div class="smo-logo">
-
-<img class="center-block" src="http://stepmaniaonline.net/images/mainpage/SmoBanner.png">
+		<img class="center-block" src="https://stepmaniaonline.net/images/mainpage/SmoBanner.png">
 	</div>

@@ -56,3 +56,4 @@ $route['pack/id/(:any)'] = 'pack/id/$1';
 $route['title/(:any)'] = 'main/search/title/$1';
 $route['artist/(:any)'] = 'main/search/artist/$1';
 $route['packs/(:any)'] = 'main/search/packs/$1';
+$route['link/(:any)'] = 'link/index/$1';

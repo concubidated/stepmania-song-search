@@ -20,7 +20,8 @@
 
 <?php if(isset($pack)): ?>
 	<div class="container">
-	  <h2 style="color: #fff;"><?php echo $pack->packname; ?> contains <?php echo sizeof($songs); ?> Songs</h2>
+	  <h2 style="color: #fff;"><?php echo $pack->packname; ?> contains <?php echo sizeof($songs); ?> Songs </h2>
+	<h4 style="color: #fff;"><a href="/link/<?php echo $pack->packname.".zip"; ?>">Download</a></h4>
 	  <table style="background-color: #f5f5f5;" class="table">
     
 
@@ -37,6 +38,7 @@
 
 	<tbody>
 	<?php foreach($songs as $song): ?>
+<?php //echo "<pre>"; print_r($song); "</pre>" ?>
 	<tr>
 		<td style="vertical-align: middle;"><?php echo $song['title']; ?></td>
                 <td style="vertical-align: middle;"><?php echo $song['artist']; ?></td>

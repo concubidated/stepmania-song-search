@@ -81,13 +81,12 @@ class DB_Model extends CI_Model {
 
 	public function packSongInfo($id){
 		if($id){
-			$sql = "SELECT *,s.id as id,c.id as chart FROM Songs as s INNER JOIN PackSongs as ps ON ps.songid = s.id
+			$sql = "SELECT *,s.id as id,c.id as chart, s.date as date FROM Songs as s INNER JOIN PackSongs as ps ON ps.songid = s.id
 				LEFT JOIN Charts as c on c.songid = s.id WHERE ps.packid = $id";
 
 			$query = $this->db->query($sql);
 			$results = $query->result_array();
 			$songs = Array();
-
 			foreach($results as $s){
 				$songs[$s['id']]['artist'] = $s['artist'];
 				$songs[$s['id']]['title'] = $s['title'];
@@ -126,5 +125,17 @@ class DB_Model extends CI_Model {
 			return($query->result_array());
 		}
 	}
+
+	public function getNewPacks($limit=20){
+		$sql = "SELECT p.id, p.packname, p.size_bytes as size, p.date, (SELECT COUNT(*) FROM PackSongs AS ps WHERE ps.packid = p.id) AS songcount from Packs as p ORDER BY date DESC limit $limit";
+		$query = $this->db->query($sql);
+		return($query->result_array());
+	}
 	
+	public function getRandomPacks($limit=20){
+		$sql = "SELECT p.id, p.packname, p.size_bytes as size, p.date, (SELECT COUNT(*) FROM PackSongs AS ps WHERE ps.packid = p.id) AS songcount from Packs as p ORDER BY RAND() DESC limit $limit";
+		$query = $this->db->query($sql);
+		return($query->result_array());
+	}
+
 }
