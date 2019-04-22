@@ -23,6 +23,11 @@ class Main extends CI_Controller {
 		if($search_post)
 			redirect("/$type_post/$search_post");
 
+
+		$numPacks = 20;
+		$data['recent_packs'] = $this->db_model->getNewPacks($numPacks);
+		$data['random_packs'] = $this->db_model->getRandomPacks($numPacks);
+
 		$this->load->view('template/header', $data);
 		$this->load->view('main', $data);
 

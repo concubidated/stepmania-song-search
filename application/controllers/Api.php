@@ -13,14 +13,14 @@ class Api extends CI_Controller {
 	}
 
 
-        public function packList(){
+#        public function packList(){
 
-                $results = $this->db_model->packInfo();
+ #               $results = $this->db_model->packInfo();
                 #echo "<pre>";
-		print_r(json_encode($results, JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT));
+#		print_r(json_encode($results, JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT));
                 #echo "</pre>";
 
-        }
+ #       }
 
 	public function song($search){
 

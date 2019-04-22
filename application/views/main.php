@@ -42,8 +42,8 @@
 		<td class="vertical-align-middle"><?php echo $song['artist']; ?></td>
 		<td><?php if($song['banner']): ?><img style="max-height:100px;" class="img-responsive img-rounded" src="/static/images/songs/<?php echo $song['banner']; ?>"</img><?php endif; ?></td>
 		<td class="vertical-align-middle" ><a href="/pack/id/<?php echo $song['packname']; ?>" ><?php echo $song['packname']; ?></a></td>
-		<td class="text-center vertical-align-middle"><a href="http://simfiles.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><i class="material-icons">file_download</i></a></td>
-
+		<td class="text-center vertical-align-middle"><a href="http://east.stepmania-online.com/<?php echo $song['packname'].".zip"; ?>" ><i class="material-icons">file_download</i></a></td>
+i
 	</tr>
 	<?php endforeach; ?>
 	<?php endif; ?>
@@ -65,7 +65,7 @@
 			<td><a href="/pack/id/<?php echo $pack['id']; ?>" ><?php echo $pack['packname']; ?></a></td>
 			<td><?php echo round($pack['size']/1024/1024); ?> MB</td>
 			<td><?php echo $pack['songcount'] ?></td>
-			<td class="text-center"><a href="http://simfiles.stepmania-online.com/<?php echo $pack['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
+			<td class="text-center"><a href="http://east.stepmania-online.com/<?php echo $pack['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
 
 		</tr>
 		<?php endforeach; ?>
@@ -77,4 +77,56 @@
 </div>
 
 
+<?php else: ?>
+	<div class="col-lg-8 col-lg-offset-2 container">
+	  <h2 style="color: #fff;">Recently Uploaded Packs</h2>
+	  <table style="background-color: #f5f5f5;" class="table">
+	  <thead>
+	  	<tr>
+		  <th>Pack</th>
+		  <th>Size</th>
+		  <th>Song Count</th>
+		  <th>Date</td>
+		  <th class="text-center">Download</th>
+		</tr>
+	  </thead>
+
+	  <tbody>
+	  <?php foreach($recent_packs as $pack): ?>
+	  <tr>
+	  	<td><a href="/pack/id/<?php echo $pack['id']; ?>" ><?php echo $pack['packname']; ?></a></td>
+		<td><?php echo round($pack['size']/1024/1024); ?> MB</td>
+		<td><?php echo $pack['songcount'] ?></td>
+		<td><?php echo date("Y-M-d",strtotime($pack['date'])) ?></td>
+		<td class="text-center"><a href="http://east.stepmania-online.com/<?php echo $pack['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
+	  </tr>
+	  <?php endforeach; ?>
+	  </tbody>
+	  </table>
+	  <br>
+          <h2 style="color: #fff;">Random Packs</h2>
+          <table style="background-color: #f5f5f5;" class="table">
+          <thead>
+                <tr>
+                  <th>Pack</th>
+                  <th>Size</th>
+                  <th>Song Count</th>
+                  <th>Date</td>
+                  <th class="text-center">Download</th>
+                </tr>
+          </thead>
+
+          <tbody>
+          <?php foreach($random_packs as $pack): ?>
+          <tr>
+                <td><a href="/pack/id/<?php echo $pack['id']; ?>" ><?php echo $pack['packname']; ?></a></td>
+                <td><?php echo round($pack['size']/1024/1024); ?> MB</td>
+                <td><?php echo $pack['songcount'] ?></td>
+                <td><?php echo date("Y-M-d",strtotime($pack['date'])) ?></td>
+                <td class="text-center"><a href="http://east.stepmania-online.com/<?php echo $pack['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
+          </tr>
+          <?php endforeach; ?>
+          </tbody>
 <?php endif; ?>
+
+
