@@ -13,8 +13,18 @@ class Link extends CI_Controller {
 
 	public function index($link){
 
-		$time = 300;
-		$url = $this->functions->generate_url($link, 300);
-		redirect($url);
+		$headers = getallheaders();
+
+		if(isset($headers['Referer'])){
+			if(strpos($headers['Referer'], base_url()) !== False ){
+				$time = 300;
+				$url = $this->functions->generate_url($link, 300);
+				redirect($url);
+			}
+		}
+			$pack = pathinfo(urldecode($link), PATHINFO_FILENAME);
+			$url = base_url()."pack/id/".urlencode($pack);
+			redirect($url);
 	}
+
 }
