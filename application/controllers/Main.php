@@ -9,7 +9,7 @@ class Main extends CI_Controller {
 		$data['title'] = "Stepmania Search";	
 		$this->load->helper('url');
 		//Enable Debugging
-		//$this->output->enable_profiler(true);
+		$this->output->enable_profiler(true);
 	}
 
 	public function index(){
@@ -30,7 +30,7 @@ class Main extends CI_Controller {
 
 		$this->load->view('template/header', $data);
 		$this->load->view('main', $data);
-
+                $this->load->view('template/footer');
 	}
 
 	public function search($type, $search){
@@ -55,6 +55,7 @@ class Main extends CI_Controller {
 
                 $this->load->view('template/header', $data);
                 $this->load->view('main', $data);
+                $this->load->view('template/footer');
 
 
 	}
