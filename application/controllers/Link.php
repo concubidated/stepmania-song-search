@@ -13,9 +13,11 @@ class Link extends CI_Controller {
 
 	public function index($link){
 
-		$headers = getallheaders();
-		if(isset($headers['referer'])){
-			if(strpos($headers['referer'], base_url()) !== False ){
+
+
+		$headers = $this->getallheaders();
+		if(isset($headers['Referer'])){
+			if(strpos($headers['Referer'], base_url()) !== False ){
 				$time = 300;
 				$url = $this->functions->generate_url($link, 300);
 				redirect($url);
@@ -26,4 +28,14 @@ class Link extends CI_Controller {
 			redirect($url);
 	}
 
+
+	private function getallheaders(){
+		$headers = [];
+		foreach ($_SERVER as $name => $value) {
+			if (substr($name, 0, 5) == 'HTTP_') {
+				$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+			}
+		}
+		return $headers;
+	}
 }

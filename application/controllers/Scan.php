@@ -191,8 +191,7 @@ class Scan extends CI_Controller {
 						#putenv("PYTHONPATH=PYTHON_PATH");
 						$scriptdir = getcwd()."/scripts/";
 						$cmd = 'python '.$scriptdir.'sm_parse.py "'.$songdir.'/'.$file.'"';
-						$results = shell_exec($cmd);
-						$results = json_decode($results, TRUE);
+						$results = json_decode(shell_exec($cmd), TRUE);
 						if(is_array($results)){
 							$song = $results['song'];
 							$artist = $this->db->escape($song['artist']);
