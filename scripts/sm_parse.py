@@ -5,6 +5,15 @@ from pprint import pprint
 
 filename = sys.argv[1]
 
+with open(filename) as f:
+	first = f.readline()
+
+if "//--" in first:
+	with open(filename, 'r') as fin:
+		data = fin.read().splitlines(True)
+	with open(filename, 'w') as fout:
+		fout.writelines(data[1:])
+
 simfile = {}
 simfile['song'] = {}
 
