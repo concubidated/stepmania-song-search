@@ -54,7 +54,7 @@ class DB_Model extends CI_Model {
 	public function searchPackNames($search){
 		$search = $this->db->escape_str($search);
 
-		$sql = "SELECT p.id, p.packname, p.size_bytes AS size,
+		$sql = "SELECT p.id, p.packname, p.size_bytes AS size, p.date,
 			(SELECT COUNT(*) FROM PackSongs AS ps WHERE ps.packid = p.id) AS songcount
 			FROM Packs AS p
 			INNER JOIN PackSongs AS ps ON ps.packid = p.id

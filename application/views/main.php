@@ -54,6 +54,7 @@
 		<th>Pack</th>
 		<th>Size</th>
 		<th>Song Count</th>
+		<th>Date Added</th>
 		<th class="text-center">Download</th>
 	      </tr>
 	    </thead>
@@ -64,6 +65,7 @@
 			<td><a href="/pack/id/<?php echo $pack['id']; ?>" ><?php echo $pack['packname']; ?></a></td>
 			<td><?php echo round($pack['size']/1024/1024); ?> MB</td>
 			<td><?php echo $pack['songcount'] ?></td>
+			<td><?php echo date("Y-M-d",strtotime($pack['date'])) ?></td>
 			<td class="text-center"><a href="/link/<?php echo $pack['packname'].".zip"; ?>" ><span class="glyphicon glyphicon-download-alt"></span></a></td>
 		</tr>
 		<?php endforeach; ?>

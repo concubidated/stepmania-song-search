@@ -28,6 +28,7 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <link href="/static/css/main.css" rel="stylesheet" media="screen">
+	<script data-ad-client="ca-pub-7494946866614249" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 	</head>
 
 	<body>
@@ -35,5 +36,5 @@
 
 
 	<div class="smo-logo">
-		<img class="center-block" src="https://stepmaniaonline.net/images/mainpage/SmoBanner.png">
+		<img class="center-block" src="/static/images/banner.png">
 	</div>

@@ -22,6 +22,7 @@
 	<div class="container">
 	  <h2 style="color: #fff;"><?php echo $pack->packname; ?> contains <?php echo sizeof($songs); ?> Songs </h2>
 	<h4 style="color: #fff;"><a href="/link/<?php echo $pack->packname.".zip"; ?>">Download</a></h4>
+	<h4 style="color: #fff;"><a href="/static/new/<?php echo $pack->packname.".zip"; ?>">Mirror</a></h4>
 	  <table style="background-color: #f5f5f5;" class="table">
     
 
