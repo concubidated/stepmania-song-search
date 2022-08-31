@@ -20,6 +20,7 @@ class Link extends CI_Controller {
 			if(strpos($headers['Referer'], base_url()) !== False ){
 				$time = 300;
 				$url = $this->functions->generate_url($link, 300);
+				$url = preg_replace("/^http:/i", "https:", $url);
 				redirect($url);
 			}
 		}
